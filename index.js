@@ -30,18 +30,19 @@ document.getElementById('Hindi-btn').onclick = () => {
   if (!message) {
     alert('Please speak a message first!');
   }
-  else{
-    // Simple hardcoded translation for demonstration
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'hi-IN';
-    
-    recognition.onresult = (event) => {
-      toInput.value = event.results[0][0].transcript;
-    };
-    recognition.start();
-    recognition.onend = () => {
-      speakBtn.textContent = '🎤';
-    };
-
+  else {
+    // Use Google Translate API to translate English to Hindi
+    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q=${encodeURIComponent(message)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data[0] && data[0][0] && data[0][0][0]) {
+          toInput.value = data[0][0][0];
+        } else {
+          toInput.value = 'Translation error';
+        }
+      })
+      .catch(() => {
+        toInput.value = 'Translation error';
+      });
   }
 }
